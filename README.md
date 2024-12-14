@@ -1,5 +1,5 @@
 # LC-Boombox
-Allows players to add to or replace boombox tracks in Lethal Company.
+Allows players to add to or replace boombox tracks in Lethal Company. Adds additional support for downloads from URLs or Google Drive Links. Automatically extracts .zip files if necessary. Original mod by [DeadlyKitten](https://github.com/DeadlyKitten/LC-Boombox/)
 
 ## Installing Songs when Installed via r2modman
 
@@ -10,9 +10,9 @@ You can find the correct folder by going to `Settings`, clicking `Browse profile
 ![image](https://github.com/DeadlyKitten/LC-Boombox/assets/9684760/ef378cdc-c2af-4ba4-82ef-d2aa29a9af31)
 
 ## Manual Installation
-Place the [latest release](https://github.com/DeadlyKitten/LC-Boombox/releases/latest) into the `BepInEx/plugins` folder. Run the game once to generate content folders.
+Place the latest release into the `BepInEx/plugins` folder. Run the game once to generate content folders.
 
-Place boombox tracks into `BepInEx/Custom Songs/Boombox Music`.
+Update the boombox.cfg config file located in `BepInEx\config\` and paste the download URLs in the `Song Download URLs =` field. If you have multiple links, seperate them by commas.
 
 -----
  
@@ -20,7 +20,7 @@ Place boombox tracks into `BepInEx/Custom Songs/Boombox Music`.
 - WAV
 - OGG
 - MP3
-
+- ZIP
 
 ## 🔧 Developing
 
