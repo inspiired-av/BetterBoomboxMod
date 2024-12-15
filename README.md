@@ -1,5 +1,5 @@
 # BetterBoomboxMod
-Allows players to add to or replace boombox tracks in Lethal Company. Adds additional support for downloads from URLs or Google Drive Links. Automatically extracts .zip files if necessary. Original mod by [DeadlyKitten](https://github.com/DeadlyKitten/LC-Boombox/)
+Allows players to add to or replace boombox tracks in Lethal Company. Adds additional support for uploading tracks via [direct Google Drive links](https://sites.google.com/site/gdocs2direct/) in the config file. Automatically extracts .zip files if necessary. Original mod by [DeadlyKitten](https://github.com/DeadlyKitten/LC-Boombox/)
 
 ## Installing Songs when Installed via r2modman
 
