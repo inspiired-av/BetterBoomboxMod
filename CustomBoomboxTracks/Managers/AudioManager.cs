@@ -162,7 +162,16 @@ namespace CustomBoomboxTracks.Managers
 
         private static bool IsGoogleDriveLink(string url)
         {
-            return url.Contains("drive.google.com");
+            try
+            {
+                Uri uri = new Uri(url);
+                return uri.Host.Equals("drive.google.com", StringComparison.OrdinalIgnoreCase) ||
+                       uri.Host.Equals("docs.google.com", StringComparison.OrdinalIgnoreCase);
+            }
+            catch
+            {
+                return false; // Invalid URL
+            }
         }
 
         private static string ExtractGoogleDriveFileId(string url)
@@ -325,6 +334,12 @@ namespace CustomBoomboxTracks.Managers
         private static IEnumerator DownloadFile(string url, string fileName, string fileId = null)
         {
             string savePath = Path.Combine(directory, fileName);
+            string fullPath = Path.GetFullPath(savePath);
+
+            if (!fullPath.StartsWith(Path.GetFullPath(directory), StringComparison.OrdinalIgnoreCase))
+            {
+                throw new UnauthorizedAccessException($"Invalid ZIP entry: {fileName}");
+            }
 
             // Download the file
             using (UnityWebRequest request = UnityWebRequest.Get(url))
@@ -426,8 +441,16 @@ namespace CustomBoomboxTracks.Managers
                         if (!string.IsNullOrEmpty(entry.Name))
                         {
                             string destinationPath = Path.Combine(extractTo, entry.FullName);
-                            Directory.CreateDirectory(Path.GetDirectoryName(destinationPath));
-                            entry.ExtractToFile(destinationPath, true);
+                            string fullPath = Path.GetFullPath(destinationPath);
+
+                            // Ensure the extracted file is within the target directory
+                            if (!fullPath.StartsWith(Path.GetFullPath(extractTo), StringComparison.OrdinalIgnoreCase))
+                            {
+                                throw new UnauthorizedAccessException($"Invalid ZIP entry: {entry.FullName}");
+                            }
+
+                            Directory.CreateDirectory(Path.GetDirectoryName(fullPath));
+                            entry.ExtractToFile(fullPath, true);
                         }
                     }
                 }
