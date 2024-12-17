@@ -17,7 +17,7 @@ namespace CustomBoomboxTracks
     {
         private const string GUID = "inspiired.lethalcompany.boomboxmod";
         private const string NAME = "BetterBoomboxMusic";
-        private const string VERSION = "1.0.2";
+        private const string VERSION = "1.0.3";
 
         private static BoomboxPlugin Instance;
         private static bool downloadsStarted = false;
