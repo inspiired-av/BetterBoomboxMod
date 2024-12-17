@@ -1,5 +1,5 @@
 # BetterBoomboxMod
-Allows players to add to or replace boombox tracks in Lethal Company. Adds additional support for uploading tracks via [direct Google Drive links](https://sites.google.com/site/gdocs2direct/) in the config file. Automatically extracts .zip files if necessary. Original mod by [DeadlyKitten](https://github.com/DeadlyKitten/LC-Boombox/)
+Allows players to add to or replace boombox tracks in Lethal Company. Adds additional support for uploading tracks via [Google Drive](https://sites.google.com/site/gdocs2direct/) share links in the config file. Automatically extracts .zip files if necessary. Original mod by [DeadlyKitten](https://github.com/DeadlyKitten/LC-Boombox/)
 
 ## Installing Songs when Installed via r2modman
 
@@ -14,7 +14,7 @@ Place the latest release into the `BepInEx/plugins` folder. Run the game once to
 
 ![Screenshot 2024-12-14 163912](https://github.com/user-attachments/assets/9334ed9f-116d-40ae-a090-1cddfe05cc9d)
 
-Update the boombox.cfg config file located in `BepInEx\config\` and paste the [direct download](https://sites.google.com/site/gdocs2direct/) URLs in the `Song Download URLs =` field. If you have multiple links, seperate them by commas.
+Update the boombox.cfg config file located in `BepInEx\config\` and paste the [Google Drive](https://sites.google.com/site/gdocs2direct/) share URLs in the `Song Download URLs =` field. If you have multiple links, seperate them by commas.
 
 **URL Format should look like this:** 
 
@@ -22,7 +22,7 @@ Update the boombox.cfg config file located in `BepInEx\config\` and paste the [d
 
 ![Screenshot 2024-12-14 164112](https://github.com/user-attachments/assets/238d4a4f-ae56-4fe0-8e10-c68ef50833b1)
 
-Make sure that Link Access is set to `Anyone with the link` if uploading from Google Drive
+Make sure that Link Access is set to `Anyone with the link` when uploading from [Google Drive](https://sites.google.com/site/gdocs2direct/)
 
 ![Screenshot 2024-12-14 175620](https://github.com/user-attachments/assets/8f047ff2-3148-4872-9bf5-a4f3bce9e1fd)
 

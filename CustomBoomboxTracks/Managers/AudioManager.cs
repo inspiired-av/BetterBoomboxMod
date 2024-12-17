@@ -72,6 +72,9 @@ namespace CustomBoomboxTracks.Managers
                 yield break; // Exit if fileId extraction failed
             }
 
+            // Recreate a direct download link using the fileId
+            string directLink = $"https://drive.google.com/uc?export=download&id={fileId}";
+
             // Perform the check before proceeding with the download
             if (HasFileBeenDownloadedBefore(fileId))
             {
@@ -91,7 +94,7 @@ namespace CustomBoomboxTracks.Managers
             BoomboxPlugin.LogInfo($"Pending downloads: {pendingDownloads}");
 
             // Proceed with retrieving metadata (this includes handling redirects)
-            yield return GetFileMetadataBeforeDownload(url);
+            yield return GetFileMetadataBeforeDownload(directLink);
 
         }
 
@@ -176,11 +179,25 @@ namespace CustomBoomboxTracks.Managers
 
         private static string ExtractGoogleDriveFileId(string url)
         {
-            // Regular expression to match the 'id' query parameter in the Google Drive URL
-            string pattern = @"[?&]id=([a-zA-Z0-9_-]+)";
-            Match match = Regex.Match(url, pattern);
+            // Regex to match both direct and indirect Google Drive links
+            string directPattern = @"[?&]id=([a-zA-Z0-9_-]+)"; // For direct links
+            string indirectPattern = @"drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)"; // For indirect links
 
-            return match.Success ? match.Groups[1].Value : null;
+            // Check for direct links
+            Match directMatch = Regex.Match(url, directPattern);
+            if (directMatch.Success)
+            {
+                return directMatch.Groups[1].Value;
+            }
+
+            // Check for indirect links
+            Match indirectMatch = Regex.Match(url, indirectPattern);
+            if (indirectMatch.Success)
+            {
+                return indirectMatch.Groups[1].Value;
+            }
+
+            return null; // No file ID found
         }
 
         private static IEnumerator DownloadGoogleDriveFile(string url, string fileName, string fileId)
@@ -438,20 +455,27 @@ namespace CustomBoomboxTracks.Managers
                 {
                     foreach (var entry in archive.Entries)
                     {
-                        if (!string.IsNullOrEmpty(entry.Name))
+                        // Skip directories; only process files
+                        if (string.IsNullOrEmpty(entry.Name))
+                            continue;
+
+                        // Get file name without folder structure
+                        string destinationFileName = Path.GetFileName(entry.FullName);
+                        string destinationPath = Path.Combine(extractTo, destinationFileName);
+
+                        // Ensure file extraction stays within the target directory
+                        string fullPath = Path.GetFullPath(destinationPath);
+                        if (!fullPath.StartsWith(Path.GetFullPath(extractTo), StringComparison.OrdinalIgnoreCase))
                         {
-                            string destinationPath = Path.Combine(extractTo, entry.FullName);
-                            string fullPath = Path.GetFullPath(destinationPath);
-
-                            // Ensure the extracted file is within the target directory
-                            if (!fullPath.StartsWith(Path.GetFullPath(extractTo), StringComparison.OrdinalIgnoreCase))
-                            {
-                                throw new UnauthorizedAccessException($"Invalid ZIP entry: {entry.FullName}");
-                            }
-
-                            Directory.CreateDirectory(Path.GetDirectoryName(fullPath));
-                            entry.ExtractToFile(fullPath, true);
+                            throw new UnauthorizedAccessException($"Invalid ZIP entry: {entry.FullName}");
                         }
+
+                        // Ensure the file path is unique to avoid overwriting
+                        string uniqueDestinationPath = GetUniqueFilePath(fullPath);
+
+                        // Extract the file safely
+                        entry.ExtractToFile(uniqueDestinationPath, overwrite: false);
+                        BoomboxPlugin.LogInfo($"Extracted file: {uniqueDestinationPath}");
                     }
                 }
                 BoomboxPlugin.LogInfo($"Extraction complete for {zipPath}");
@@ -460,6 +484,24 @@ namespace CustomBoomboxTracks.Managers
             {
                 BoomboxPlugin.LogError($"Error extracting ZIP: {ex.Message}");
             }
+        }
+
+        private static string GetUniqueFilePath(string filePath)
+        {
+            string directory = Path.GetDirectoryName(filePath);
+            string fileNameWithoutExt = Path.GetFileNameWithoutExtension(filePath);
+            string extension = Path.GetExtension(filePath);
+
+            int count = 1;
+            string newFilePath = filePath;
+
+            while (File.Exists(newFilePath))
+            {
+                newFilePath = Path.Combine(directory, $"{fileNameWithoutExt} ({count}){extension}");
+                count++;
+            }
+
+            return newFilePath;
         }
     }
 
